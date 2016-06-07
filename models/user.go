@@ -1,20 +1,12 @@
 package models
 
-import (
-	"time"
-
-	"github.com/jinzhu/gorm"
-)
-
-type Model struct {
-	ID        uint `gorm:"primary_key"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
+import "time"
 
 type User struct {
-	gorm.Model
+	ID          uint `gorm:"primary_key"`
 	Name        string
 	AccountName string
 	Email       string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
