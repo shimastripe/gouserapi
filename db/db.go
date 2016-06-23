@@ -2,6 +2,7 @@ package db
 
 import (
 	"log"
+	"path/filepath"
 
 	"github.com/shimastripe/gouserapi/middleware"
 	"github.com/shimastripe/gouserapi/models"
@@ -17,7 +18,8 @@ var (
 )
 
 func Connect(c *gin.Engine) {
-	DB, err = gorm.Open("sqlite3", "db/users.db")
+	dir := filepath.Dir("users.db")
+	DB, err = gorm.Open("sqlite3", dir+"/users.db")
 	if err != nil {
 		log.Fatalf("Got error when connect database, the error is '%v'", err)
 	}
