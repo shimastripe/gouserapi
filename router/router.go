@@ -1,7 +1,7 @@
 package router
 
 import (
-	"go-user-api/controllers"
+	"github.com/shimastripe/gouserapi/controllers"
 
 	"github.com/gin-gonic/gin"
 )

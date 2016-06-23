@@ -3,8 +3,8 @@ package db
 import (
 	"log"
 
-	"go-user-api/middleware"
-	"go-user-api/models"
+	"github.com/shimastripe/gouserapi/middleware"
+	"github.com/shimastripe/gouserapi/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"

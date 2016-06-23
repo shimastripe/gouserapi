@@ -1,9 +1,10 @@
 package controllers
 
 import (
-	"go-user-api/db"
-	"go-user-api/models"
 	"net/http"
+
+	"github.com/shimastripe/gouserapi/db"
+	"github.com/shimastripe/gouserapi/models"
 
 	"github.com/gin-gonic/gin"
 )

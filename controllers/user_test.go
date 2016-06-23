@@ -3,11 +3,12 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
-	"go-user-api/models"
-	"go-user-api/server"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
+
+	"github.com/shimastripe/gouserapi/models"
+	"github.com/shimastripe/gouserapi/server"
 
 	"testing"
 )

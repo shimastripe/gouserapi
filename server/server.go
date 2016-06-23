@@ -1,8 +1,8 @@
 package server
 
 import (
-	"go-user-api/db"
-	"go-user-api/router"
+	"github.com/shimastripe/gouserapi/db"
+	"github.com/shimastripe/gouserapi/router"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,6 +1,6 @@
 package main
 
-import "go-user-api/server"
+import "github.com/shimastripe/gouserapi/server"
 
 // main ...
 func main() {
