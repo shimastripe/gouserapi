@@ -18,12 +18,12 @@ var (
 )
 
 func Connect(c *gin.Engine) {
-	dir := filepath.Dir("users.db")
-	DB, err = gorm.Open("sqlite3", dir+"/users.db")
+	dir := filepath.Dir("db/database.db")
+	DB, err = gorm.Open("sqlite3", dir+"/database.db")
 	if err != nil {
 		log.Fatalf("Got error when connect database, the error is '%v'", err)
 	}
-	DB.AutoMigrate(&models.User{})
+	DB.AutoMigrate(&models.User{}, &models.Profile{}, &models.AccountName{}, &models.Email{})
 	c.Use(middleware.SetDBtoContext(DB))
 }
 

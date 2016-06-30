@@ -44,6 +44,10 @@ func CreateUser(c *gin.Context) {
 	var user models.User
 	c.Bind(&user)
 	db.Create(&user)
+	user.Profile = &models.Profile{
+		ID:   1,
+		Name: "Hoge",
+	}
 	c.JSON(201, user)
 }
 
