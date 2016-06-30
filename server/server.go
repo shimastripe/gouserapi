@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/shimastripe/gouserapi/db"
+	"github.com/shimastripe/gouserapi/middleware"
 	"github.com/shimastripe/gouserapi/router"
 
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,8 @@ import (
 
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
-	db.Connect(r)
+	DB := db.Connect(r)
+	r.Use(middleware.SetDBtoContext(DB))
 	router.Initialize(r)
 	return r
 }

@@ -4,7 +4,6 @@ import (
 	"log"
 	"path/filepath"
 
-	"github.com/shimastripe/gouserapi/middleware"
 	"github.com/shimastripe/gouserapi/models"
 
 	"github.com/gin-gonic/gin"
@@ -17,14 +16,14 @@ var (
 	err error
 )
 
-func Connect(c *gin.Engine) {
+func Connect(c *gin.Engine) *gorm.DB {
 	dir := filepath.Dir("db/database.db")
 	DB, err = gorm.Open("sqlite3", dir+"/database.db")
 	if err != nil {
 		log.Fatalf("Got error when connect database, the error is '%v'", err)
 	}
 	DB.AutoMigrate(&models.User{}, &models.Profile{}, &models.AccountName{}, &models.Email{})
-	c.Use(middleware.SetDBtoContext(DB))
+	return DB
 }
 
 func DBInstance(c *gin.Context) *gorm.DB {
