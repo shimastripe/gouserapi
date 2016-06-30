@@ -1,9 +1,13 @@
 package main
 
-import "github.com/shimastripe/gouserapi/server"
+import (
+	"github.com/shimastripe/gouserapi/db"
+	"github.com/shimastripe/gouserapi/server"
+)
 
 // main ...
 func main() {
-	r := server.SetupRouter()
-	r.Run(":8080")
+	database := db.Connect()
+	s := server.Setup(database)
+	s.Run(":8080")
 }

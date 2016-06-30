@@ -1,17 +1,17 @@
 package server
 
 import (
-	"github.com/shimastripe/gouserapi/db"
 	"github.com/shimastripe/gouserapi/middleware"
 	"github.com/shimastripe/gouserapi/router"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-func SetupRouter() *gin.Engine {
+func Setup(db *gorm.DB) *gin.Engine {
 	r := gin.Default()
-	DB := db.Connect(r)
-	r.Use(middleware.SetDBtoContext(DB))
+	r.Use(middleware.SetDBtoContext(db))
 	router.Initialize(r)
 	return r
 }

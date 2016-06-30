@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"strconv"
 
+	"github.com/shimastripe/gouserapi/db"
 	"github.com/shimastripe/gouserapi/models"
 	"github.com/shimastripe/gouserapi/server"
 
@@ -17,12 +18,13 @@ var uuid string
 
 func TestGetUsers(t *testing.T) {
 	response := httptest.NewRecorder()
-	router := server.SetupRouter()
+	database := db.Connect()
+	s := server.Setup(database)
 	req, err := http.NewRequest("GET", "http://localhost:8080/api/users", nil)
 	if err != nil {
 		t.Error(err)
 	}
-	router.ServeHTTP(response, req)
+	s.ServeHTTP(response, req)
 	if response.Code != http.StatusOK {
 		t.Errorf("Got error for GET request to /api/users")
 	}
@@ -30,7 +32,8 @@ func TestGetUsers(t *testing.T) {
 
 func TestCreateUser(t *testing.T) {
 	response := httptest.NewRecorder()
-	router := server.SetupRouter()
+	database := db.Connect()
+	s := server.Setup(database)
 	requestParams := `{
 		"name": "NAME",
 		"account_name": "ACCOUNTNAME",
@@ -44,7 +47,7 @@ func TestCreateUser(t *testing.T) {
 	// Content-Type 設定
 	req.Header.Set("Content-Type", "application/json")
 
-	router.ServeHTTP(response, req)
+	s.ServeHTTP(response, req)
 	if response.Code != http.StatusCreated {
 		t.Errorf("Got error for POST request to /api/users")
 	}
@@ -64,12 +67,13 @@ func TestCreateUser(t *testing.T) {
 
 func TestGetUser(t *testing.T) {
 	response := httptest.NewRecorder()
-	router := server.SetupRouter()
+	database := db.Connect()
+	s := server.Setup(database)
 	req, err := http.NewRequest("GET", "http://localhost:8080/api/users/"+uuid, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	router.ServeHTTP(response, req)
+	s.ServeHTTP(response, req)
 	if response.Code != http.StatusOK {
 		t.Errorf("Got error for GET request to /api/users/" + uuid)
 	}
@@ -86,7 +90,8 @@ func TestGetUser(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 	response := httptest.NewRecorder()
-	router := server.SetupRouter()
+	database := db.Connect()
+	s := server.Setup(database)
 	requestParams := `{
 		"name": "NAME_2",
 		"account_name": "ACCOUNTNAME_2",
@@ -100,7 +105,7 @@ func TestUpdateUser(t *testing.T) {
 	// Content-Type 設定
 	req.Header.Set("Content-Type", "application/json")
 
-	router.ServeHTTP(response, req)
+	s.ServeHTTP(response, req)
 	if response.Code != http.StatusOK {
 		t.Errorf("Got error for PUT request to /api/users/" + uuid)
 	}
@@ -117,12 +122,13 @@ func TestUpdateUser(t *testing.T) {
 
 func TestDeleteUser(t *testing.T) {
 	response := httptest.NewRecorder()
-	router := server.SetupRouter()
+	database := db.Connect()
+	s := server.Setup(database)
 	req, err := http.NewRequest("DELETE", "http://localhost:8080/api/users/"+uuid, nil)
 	if err != nil {
 		t.Error(err)
 	}
-	router.ServeHTTP(response, req)
+	s.ServeHTTP(response, req)
 	if response.Code != http.StatusNoContent {
 		t.Errorf("Got error for DELETE request to /api/users/" + uuid)
 	}
