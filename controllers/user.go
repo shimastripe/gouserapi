@@ -35,7 +35,13 @@ func GetUser(c *gin.Context) {
 		c.JSON(404, content)
 		return
 	}
-	c.JSON(200, query.FilterField(strings.Split(fields, ","), &user))
+
+	if fields != "" {
+		c.JSON(200, query.FilterField(strings.Split(fields, ","), &user))
+	} else {
+		c.JSON(200, &user)
+	}
+
 	// curl -i http://localhost:8080/api/v1/users/1
 }
 

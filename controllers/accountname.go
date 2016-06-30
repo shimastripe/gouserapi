@@ -35,7 +35,12 @@ func GetAccountName(c *gin.Context) {
 		c.JSON(404, content)
 		return
 	}
-	c.JSON(200, query.FilterField(strings.Split(fields, ","), &account_name))
+
+	if fields != "" {
+		c.JSON(200, query.FilterField(strings.Split(fields, ","), &account_name))
+	} else {
+		c.JSON(200, &account_name)
+	}
 	// curl -i http://localhost:8080/api/v1/account_names/1
 }
 

@@ -35,7 +35,11 @@ func GetEmail(c *gin.Context) {
 		c.JSON(404, content)
 		return
 	}
-	c.JSON(200, query.FilterField(strings.Split(fields, ","), &email))
+	if fields != "" {
+		c.JSON(200, query.FilterField(strings.Split(fields, ","), &email))
+	} else {
+		c.JSON(200, &email)
+	}
 	// curl -i http://localhost:8080/api/v1/emails/1
 }
 

@@ -35,7 +35,11 @@ func GetProfile(c *gin.Context) {
 		c.JSON(404, content)
 		return
 	}
-	c.JSON(200, query.FilterField(strings.Split(fields, ","), &profile))
+	if fields != "" {
+		c.JSON(200, query.FilterField(strings.Split(fields, ","), &profile))
+	} else {
+		c.JSON(200, &profile)
+	}
 	// curl -i http://localhost:8080/api/v1/profiles/1
 }
 
