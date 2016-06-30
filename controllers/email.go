@@ -43,7 +43,11 @@ func CreateEmail(c *gin.Context) {
 	db := db.DBInstance(c)
 	var email models.Email
 	c.Bind(&email)
-	db.Create(&email)
+	if db.Create(&email).Error != nil {
+		content := gin.H{"error": "error occured"}
+		c.JSON(500, content)
+		return
+	}
 	c.JSON(201, email)
 }
 

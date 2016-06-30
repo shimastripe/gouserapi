@@ -43,9 +43,8 @@ func CreateProfile(c *gin.Context) {
 	db := db.DBInstance(c)
 	var profile models.Profile
 	c.Bind(&profile)
-	err := db.Create(&profile).Error
-	if err != nil {
-		content := gin.H{"error": err}
+	if db.Create(&profile).Error != nil {
+		content := gin.H{"error": "error occured"}
 		c.JSON(500, content)
 		return
 	}

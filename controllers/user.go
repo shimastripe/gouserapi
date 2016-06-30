@@ -43,10 +43,10 @@ func CreateUser(c *gin.Context) {
 	db := db.DBInstance(c)
 	var user models.User
 	c.Bind(&user)
-	db.Create(&user)
-	user.Profile = &models.Profile{
-		ID:   1,
-		Name: "Hoge",
+	if db.Create(&user).Error != nil {
+		content := gin.H{"error": "error occured"}
+		c.JSON(500, content)
+		return
 	}
 	c.JSON(201, user)
 }

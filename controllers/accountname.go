@@ -43,9 +43,8 @@ func CreateAccountName(c *gin.Context) {
 	db := db.DBInstance(c)
 	var account_name models.AccountName
 	c.Bind(&account_name)
-	err := db.Create(&account_name).Error
-	if err != nil {
-		content := gin.H{"error": err}
+	if db.Create(&account_name).Error != nil {
+		content := gin.H{"error": "error occured"}
 		c.JSON(500, content)
 		return
 	}
