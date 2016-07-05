@@ -15,9 +15,9 @@ func GetEmails(c *gin.Context) {
 	var emails []models.Email
 
 	if fields != "" {
-		db.Select(fields).Find(&emails)
+		db.Select(fields).Preload("User").Find(&emails)
 	} else {
-		db.Find(&emails)
+		db.Preload("User").Find(&emails)
 	}
 
 	c.JSON(200, emails)
@@ -31,9 +31,9 @@ func GetEmail(c *gin.Context) {
 	var err error
 
 	if fields != "" {
-		err = db.Select(fields).First(&email, id).Error
+		err = db.Select(fields).Preload("User").First(&email, id).Error
 	} else {
-		err = db.First(&email, id).Error
+		err = db.Preload("User").First(&email, id).Error
 	}
 
 	if err != nil {

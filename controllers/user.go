@@ -15,9 +15,9 @@ func GetUsers(c *gin.Context) {
 	var users []models.User
 
 	if fields != "" {
-		db.Select(fields).Find(&users)
+		db.Select(fields).Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").Find(&users)
 	} else {
-		db.Find(&users)
+		db.Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").Find(&users)
 	}
 
 	c.JSON(200, users)
@@ -31,9 +31,9 @@ func GetUser(c *gin.Context) {
 	var err error
 
 	if fields != "" {
-		err = db.Select(fields).First(&user, id).Error
+		err = db.Select(fields).Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").First(&user, id).Error
 	} else {
-		err = db.First(&user, id).Error
+		err = db.Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").First(&user, id).Error
 	}
 
 	if err != nil {

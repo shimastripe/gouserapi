@@ -36,5 +36,12 @@ func Initialize(r *gin.Engine) {
 		api.POST("/emails", controllers.CreateEmail)
 		api.PUT("/emails/:id", controllers.UpdateEmail)
 		api.DELETE("/emails/:id", controllers.DeleteEmail)
+
+		//NATION API
+		api.GET("/nations", controllers.GetNations)
+		api.GET("/nations/:id", controllers.GetNation)
+		api.POST("/nations", controllers.CreateNation)
+		api.PUT("/nations/:id", controllers.UpdateNation)
+		api.DELETE("/nations/:id", controllers.DeleteNation)
 	}
 }

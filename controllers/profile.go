@@ -15,9 +15,9 @@ func GetProfiles(c *gin.Context) {
 	var profiles []models.Profile
 
 	if fields != "" {
-		db.Select(fields).Find(&profiles)
+		db.Select(fields).Preload("User").Preload("Nation").Find(&profiles)
 	} else {
-		db.Find(&profiles)
+		db.Preload("User").Preload("Nation").Find(&profiles)
 	}
 
 	c.JSON(200, profiles)
@@ -31,9 +31,9 @@ func GetProfile(c *gin.Context) {
 	var err error
 
 	if fields != "" {
-		err = db.Select(fields).First(&profile, id).Error
+		err = db.Select(fields).Preload("User").Preload("Nation").First(&profile, id).Error
 	} else {
-		err = db.First(&profile, id).Error
+		err = db.Preload("User").Preload("Nation").First(&profile, id).Error
 	}
 
 	if err != nil {

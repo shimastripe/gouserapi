@@ -17,7 +17,7 @@ func Connect() *gorm.DB {
 	if err != nil {
 		log.Fatalf("Got error when connect database, the error is '%v'", err)
 	}
-	db.AutoMigrate(&models.User{}, &models.Profile{}, &models.AccountName{}, &models.Email{})
+	db.AutoMigrate(&models.User{}, &models.Profile{}, &models.AccountName{}, &models.Email{}, &models.Nation{})
 	return db
 }
 

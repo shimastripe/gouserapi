@@ -15,9 +15,9 @@ func GetAccountNames(c *gin.Context) {
 	var account_names []models.AccountName
 
 	if fields != "" {
-		db.Select(fields).Find(&account_names)
+		db.Select(fields).Preload("User").Find(&account_names)
 	} else {
-		db.Find(&account_names)
+		db.Preload("User").Find(&account_names)
 	}
 
 	c.JSON(200, account_names)
@@ -31,9 +31,9 @@ func GetAccountName(c *gin.Context) {
 	var err error
 
 	if fields != "" {
-		err = db.Select(fields).First(&account_name, id).Error
+		err = db.Select(fields).Preload("User").First(&account_name, id).Error
 	} else {
-		err = db.First(&account_name, id).Error
+		err = db.Preload("User").First(&account_name, id).Error
 	}
 
 	if err != nil {
