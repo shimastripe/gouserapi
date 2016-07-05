@@ -8,8 +8,8 @@ type User struct {
 	ProfileID   uint         `gorm:"unique" json:"profile_id,omitempty"`
 	AccountName *AccountName `gorm:"unique" json:"account_name,omitempty"`
 	Emails      []Email      `gorm:"unique" json:"emails,omitempty"`
-	CreatedAt   time.Time    `json:"created_at,omitempty"`
-	UpdatedAt   time.Time    `json:"updated_at,omitempty"`
+	CreatedAt   *time.Time   `json:"created_at,omitempty"`
+	UpdatedAt   *time.Time   `json:"updated_at,omitempty"`
 }
 
 // Belongs-to

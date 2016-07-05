@@ -2,19 +2,24 @@ package controllers
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/shimastripe/gouserapi/db"
 	"github.com/shimastripe/gouserapi/models"
-	"github.com/shimastripe/gouserapi/query"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetEmails(c *gin.Context) {
 	db := db.DBInstance(c)
+	fields := c.DefaultQuery("fields", "")
 	var emails []models.Email
-	db.Find(&emails)
+
+	if fields != "" {
+		db.Select(fields).Find(&emails)
+	} else {
+		db.Find(&emails)
+	}
+
 	c.JSON(200, emails)
 }
 
@@ -24,6 +29,7 @@ func GetEmail(c *gin.Context) {
 	fields := c.DefaultQuery("fields", "")
 	var email models.Email
 	var err error
+
 	if fields != "" {
 		err = db.Select(fields).First(&email, id).Error
 	} else {
@@ -35,11 +41,8 @@ func GetEmail(c *gin.Context) {
 		c.JSON(404, content)
 		return
 	}
-	if fields != "" {
-		c.JSON(200, query.FilterField(strings.Split(fields, ","), &email))
-	} else {
-		c.JSON(200, &email)
-	}
+
+	c.JSON(200, &email)
 	// curl -i http://localhost:8080/api/v1/emails/1
 }
 

@@ -2,19 +2,24 @@ package controllers
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/shimastripe/gouserapi/db"
 	"github.com/shimastripe/gouserapi/models"
-	"github.com/shimastripe/gouserapi/query"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetUsers(c *gin.Context) {
 	db := db.DBInstance(c)
+	fields := c.DefaultQuery("fields", "")
 	var users []models.User
-	db.Find(&users)
+
+	if fields != "" {
+		db.Select(fields).Find(&users)
+	} else {
+		db.Find(&users)
+	}
+
 	c.JSON(200, users)
 }
 
@@ -24,6 +29,7 @@ func GetUser(c *gin.Context) {
 	fields := c.DefaultQuery("fields", "")
 	var user models.User
 	var err error
+
 	if fields != "" {
 		err = db.Select(fields).First(&user, id).Error
 	} else {
@@ -36,12 +42,7 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
-	if fields != "" {
-		c.JSON(200, query.FilterField(strings.Split(fields, ","), &user))
-	} else {
-		c.JSON(200, &user)
-	}
-
+	c.JSON(200, user)
 	// curl -i http://localhost:8080/api/v1/users/1
 }
 

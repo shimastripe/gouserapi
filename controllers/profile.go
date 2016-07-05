@@ -2,19 +2,24 @@ package controllers
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/shimastripe/gouserapi/db"
 	"github.com/shimastripe/gouserapi/models"
-	"github.com/shimastripe/gouserapi/query"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetProfiles(c *gin.Context) {
 	db := db.DBInstance(c)
+	fields := c.DefaultQuery("fields", "")
 	var profiles []models.Profile
-	db.Find(&profiles)
+
+	if fields != "" {
+		db.Select(fields).Find(&profiles)
+	} else {
+		db.Find(&profiles)
+	}
+
 	c.JSON(200, profiles)
 }
 
@@ -24,6 +29,7 @@ func GetProfile(c *gin.Context) {
 	fields := c.DefaultQuery("fields", "")
 	var profile models.Profile
 	var err error
+
 	if fields != "" {
 		err = db.Select(fields).First(&profile, id).Error
 	} else {
@@ -35,11 +41,7 @@ func GetProfile(c *gin.Context) {
 		c.JSON(404, content)
 		return
 	}
-	if fields != "" {
-		c.JSON(200, query.FilterField(strings.Split(fields, ","), &profile))
-	} else {
-		c.JSON(200, &profile)
-	}
+	c.JSON(200, &profile)
 	// curl -i http://localhost:8080/api/v1/profiles/1
 }
 

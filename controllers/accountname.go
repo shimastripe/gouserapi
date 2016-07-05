@@ -2,19 +2,24 @@ package controllers
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/shimastripe/gouserapi/db"
 	"github.com/shimastripe/gouserapi/models"
-	"github.com/shimastripe/gouserapi/query"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetAccountNames(c *gin.Context) {
 	db := db.DBInstance(c)
+	fields := c.DefaultQuery("fields", "")
 	var account_names []models.AccountName
-	db.Find(&account_names)
+
+	if fields != "" {
+		db.Select(fields).Find(&account_names)
+	} else {
+		db.Find(&account_names)
+	}
+
 	c.JSON(200, account_names)
 }
 
@@ -24,6 +29,7 @@ func GetAccountName(c *gin.Context) {
 	fields := c.DefaultQuery("fields", "")
 	var account_name models.AccountName
 	var err error
+
 	if fields != "" {
 		err = db.Select(fields).First(&account_name, id).Error
 	} else {
@@ -36,11 +42,7 @@ func GetAccountName(c *gin.Context) {
 		return
 	}
 
-	if fields != "" {
-		c.JSON(200, query.FilterField(strings.Split(fields, ","), &account_name))
-	} else {
-		c.JSON(200, &account_name)
-	}
+	c.JSON(200, &account_name)
 	// curl -i http://localhost:8080/api/v1/account_names/1
 }
 
