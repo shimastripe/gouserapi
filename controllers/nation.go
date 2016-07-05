@@ -11,31 +11,18 @@ import (
 
 func GetNations(c *gin.Context) {
 	db := db.DBInstance(c)
-	fields := c.DefaultQuery("fields", "")
+	fields := c.DefaultQuery("fields", "*")
 	var nations []models.Profile
-
-	if fields != "" {
-		db.Select(fields).Find(&nations)
-	} else {
-		db.Find(&nations)
-	}
-
+	db.Select(fields).Find(&nations)
 	c.JSON(200, nations)
 }
 
 func GetNation(c *gin.Context) {
 	db := db.DBInstance(c)
 	id := c.Params.ByName("id")
-	fields := c.DefaultQuery("fields", "")
+	fields := c.DefaultQuery("fields", "*")
 	var nation models.Nation
-	var err error
-
-	if fields != "" {
-		err = db.Select(fields).First(&nation, id).Error
-	} else {
-		err = db.First(&nation, id).Error
-	}
-
+	err := db.Select(fields).First(&nation, id).Error
 	if err != nil {
 		content := gin.H{"error": "nation with id#" + id + " not found"}
 		c.JSON(404, content)

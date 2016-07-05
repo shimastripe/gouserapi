@@ -11,37 +11,23 @@ import (
 
 func GetAccountNames(c *gin.Context) {
 	db := db.DBInstance(c)
-	fields := c.DefaultQuery("fields", "")
+	fields := c.DefaultQuery("fields", "*")
 	var account_names []models.AccountName
-
-	if fields != "" {
-		db.Select(fields).Preload("User").Find(&account_names)
-	} else {
-		db.Preload("User").Find(&account_names)
-	}
-
+	db.Select(fields).Preload("User").Find(&account_names)
 	c.JSON(200, account_names)
 }
 
 func GetAccountName(c *gin.Context) {
 	db := db.DBInstance(c)
 	id := c.Params.ByName("id")
-	fields := c.DefaultQuery("fields", "")
+	fields := c.DefaultQuery("fields", "*")
 	var account_name models.AccountName
-	var err error
-
-	if fields != "" {
-		err = db.Select(fields).Preload("User").First(&account_name, id).Error
-	} else {
-		err = db.Preload("User").First(&account_name, id).Error
-	}
-
+	err := db.Select(fields).Preload("User").First(&account_name, id).Error
 	if err != nil {
 		content := gin.H{"error": "account_name with id#" + id + " not found"}
 		c.JSON(404, content)
 		return
 	}
-
 	c.JSON(200, &account_name)
 	// curl -i http://localhost:8080/api/v1/account_names/1
 }

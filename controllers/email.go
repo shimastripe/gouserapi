@@ -11,37 +11,23 @@ import (
 
 func GetEmails(c *gin.Context) {
 	db := db.DBInstance(c)
-	fields := c.DefaultQuery("fields", "")
+	fields := c.DefaultQuery("fields", "*")
 	var emails []models.Email
-
-	if fields != "" {
-		db.Select(fields).Preload("User").Find(&emails)
-	} else {
-		db.Preload("User").Find(&emails)
-	}
-
+	db.Select(fields).Preload("User").Find(&emails)
 	c.JSON(200, emails)
 }
 
 func GetEmail(c *gin.Context) {
 	db := db.DBInstance(c)
 	id := c.Params.ByName("id")
-	fields := c.DefaultQuery("fields", "")
+	fields := c.DefaultQuery("fields", "*")
 	var email models.Email
-	var err error
-
-	if fields != "" {
-		err = db.Select(fields).Preload("User").First(&email, id).Error
-	} else {
-		err = db.Preload("User").First(&email, id).Error
-	}
-
+	err := db.Select(fields).Preload("User").First(&email, id).Error
 	if err != nil {
 		content := gin.H{"error": "email with id#" + id + " not found"}
 		c.JSON(404, content)
 		return
 	}
-
 	c.JSON(200, &email)
 	// curl -i http://localhost:8080/api/v1/emails/1
 }

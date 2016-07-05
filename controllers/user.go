@@ -11,37 +11,23 @@ import (
 
 func GetUsers(c *gin.Context) {
 	db := db.DBInstance(c)
-	fields := c.DefaultQuery("fields", "")
+	fields := c.DefaultQuery("fields", "*")
 	var users []models.User
-
-	if fields != "" {
-		db.Select(fields).Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").Find(&users)
-	} else {
-		db.Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").Find(&users)
-	}
-
+	db.Select(fields).Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").Find(&users)
 	c.JSON(200, users)
 }
 
 func GetUser(c *gin.Context) {
 	db := db.DBInstance(c)
 	id := c.Params.ByName("id")
-	fields := c.DefaultQuery("fields", "")
+	fields := c.DefaultQuery("fields", "*")
 	var user models.User
-	var err error
-
-	if fields != "" {
-		err = db.Select(fields).Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").First(&user, id).Error
-	} else {
-		err = db.Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").First(&user, id).Error
-	}
-
+	err := db.Select(fields).Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").First(&user, id).Error
 	if err != nil {
 		content := gin.H{"error": "user with id#" + id + " not found"}
 		c.JSON(404, content)
 		return
 	}
-
 	c.JSON(200, user)
 	// curl -i http://localhost:8080/api/v1/users/1
 }

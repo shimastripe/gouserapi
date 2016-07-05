@@ -11,31 +11,18 @@ import (
 
 func GetProfiles(c *gin.Context) {
 	db := db.DBInstance(c)
-	fields := c.DefaultQuery("fields", "")
+	fields := c.DefaultQuery("fields", "*")
 	var profiles []models.Profile
-
-	if fields != "" {
-		db.Select(fields).Preload("User").Preload("Nation").Find(&profiles)
-	} else {
-		db.Preload("User").Preload("Nation").Find(&profiles)
-	}
-
+	db.Select(fields).Preload("User").Preload("Nation").Find(&profiles)
 	c.JSON(200, profiles)
 }
 
 func GetProfile(c *gin.Context) {
 	db := db.DBInstance(c)
 	id := c.Params.ByName("id")
-	fields := c.DefaultQuery("fields", "")
+	fields := c.DefaultQuery("fields", "*")
 	var profile models.Profile
-	var err error
-
-	if fields != "" {
-		err = db.Select(fields).Preload("User").Preload("Nation").First(&profile, id).Error
-	} else {
-		err = db.Preload("User").Preload("Nation").First(&profile, id).Error
-	}
-
+	err := db.Select(fields).Preload("User").Preload("Nation").First(&profile, id).Error
 	if err != nil {
 		content := gin.H{"error": "profile with id#" + id + " not found"}
 		c.JSON(404, content)
