@@ -27,12 +27,12 @@ func DBInstance(c *gin.Context) *gorm.DB {
 	return c.MustGet("DB").(*gorm.DB)
 }
 
-func Paginate(c *gin.Context) *gorm.DB {
+func Paginate(c *gin.Context) *gorm.DB, error {
 	db := DBInstance(c)
 	limit_query := c.DefaultQuery("limit", "25")
 	page_query := c.Query("page")
 	last_id_query := c.Query("last_id")
-	// order := c.Query("order")
+	order := c.DefaultQuery("order", "desc")
 
 	limit, err := strconv.Atoi(limit_query)
 	if err != nil {
@@ -49,7 +49,15 @@ func Paginate(c *gin.Context) *gorm.DB {
 		return db.Offset(limit * (page - 1)).Limit(limit)
 	} else if last_id_query != "" {
 		// pagination 2
-
+		last_id, err := strconv.Atoi(last_id_query)
+		if err != nil {
+			last_id = 25
+		}
+		if order == "desc" {
+			return db.Where("id < ?", last_id).Limit(limit).Order("id desc")
+		} else {
+			return db.Where("id > ?", last_id).Limit(limit).Order("id asc")
+		}
 	}
 
 	return db
