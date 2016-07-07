@@ -3,6 +3,7 @@ package db
 import (
 	"log"
 	"path/filepath"
+	"strconv"
 
 	"github.com/shimastripe/gouserapi/models"
 
@@ -23,4 +24,32 @@ func Connect() *gorm.DB {
 
 func DBInstance(c *gin.Context) *gorm.DB {
 	return c.MustGet("DB").(*gorm.DB)
+}
+
+func Paginate(c *gin.Context) *gorm.DB {
+	db := DBInstance(c)
+	limit_query := c.DefaultQuery("limit", "25")
+	page_query := c.Query("page")
+	last_id_query := c.Query("last_id")
+	order := c.Query("order")
+
+	limit, err := strconv.Atoi(limit_query)
+	if err != nil {
+		limit = 25
+	}
+
+	if page_query != "" {
+		// pagination 1
+		page, err := strconv.Atoi(page_query)
+		if err != nil {
+			page = 1
+		}
+		offset := limit * (page - 1)
+		return db.Offset(offset).Limit(limit)
+	} else if last_id_query != "" {
+		// pagination 2
+
+	}
+
+	return db
 }

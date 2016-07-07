@@ -10,7 +10,7 @@ import (
 )
 
 func GetUsers(c *gin.Context) {
-	db := db.DBInstance(c)
+	db := db.Paginate(c)
 	fields := c.DefaultQuery("fields", "*")
 	var users []models.User
 	db.Select(fields).Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").Find(&users)
