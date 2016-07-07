@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"log"
 	"math"
 	"path/filepath"
@@ -27,7 +28,7 @@ func DBInstance(c *gin.Context) *gorm.DB {
 	return c.MustGet("DB").(*gorm.DB)
 }
 
-func Paginate(c *gin.Context) *gorm.DB, error {
+func Paginate(c *gin.Context) (*gorm.DB, error) {
 	db := DBInstance(c)
 	limit_query := c.DefaultQuery("limit", "25")
 	page_query := c.Query("page")
@@ -36,7 +37,7 @@ func Paginate(c *gin.Context) *gorm.DB, error {
 
 	limit, err := strconv.Atoi(limit_query)
 	if err != nil {
-		limit = 25
+		return db, errors.New("invalid parameter.")
 	}
 	limit = int(math.Max(1, math.Min(10000, float64(limit))))
 
@@ -44,21 +45,20 @@ func Paginate(c *gin.Context) *gorm.DB, error {
 		// pagination 1
 		page, err := strconv.Atoi(page_query)
 		if err != nil {
-			page = 1
+			return db, errors.New("invalid parameter.")
 		}
-		return db.Offset(limit * (page - 1)).Limit(limit)
+		return db.Offset(limit * (page - 1)).Limit(limit), nil
 	} else if last_id_query != "" {
 		// pagination 2
 		last_id, err := strconv.Atoi(last_id_query)
 		if err != nil {
-			last_id = 25
+			return db, errors.New("invalid parameter.")
 		}
 		if order == "desc" {
-			return db.Where("id < ?", last_id).Limit(limit).Order("id desc")
+			return db.Where("id < ?", last_id).Limit(limit).Order("id desc"), nil
 		} else {
-			return db.Where("id > ?", last_id).Limit(limit).Order("id asc")
+			return db.Where("id > ?", last_id).Limit(limit).Order("id asc"), nil
 		}
 	}
-
-	return db
+	return db, nil
 }

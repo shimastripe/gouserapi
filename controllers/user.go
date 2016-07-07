@@ -10,7 +10,11 @@ import (
 )
 
 func GetUsers(c *gin.Context) {
-	db := db.Paginate(c)
+	db, err := db.Paginate(c)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "invalid parameter."})
+		return
+	}
 	fields := c.DefaultQuery("fields", "*")
 	var users []models.User
 	db.Select(fields).Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").Find(&users)
