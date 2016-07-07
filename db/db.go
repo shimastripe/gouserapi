@@ -47,6 +47,7 @@ func Paginate(c *gin.Context) (*gorm.DB, error) {
 		if err != nil {
 			return db, errors.New("invalid parameter.")
 		}
+		page = int(math.Max(1, float64(page)))
 		return db.Offset(limit * (page - 1)).Limit(limit), nil
 	} else if last_id_query != "" {
 		// pagination 2
@@ -54,11 +55,12 @@ func Paginate(c *gin.Context) (*gorm.DB, error) {
 		if err != nil {
 			return db, errors.New("invalid parameter.")
 		}
+		last_id = int(math.Max(1, float64(last_id)))
 		if order == "desc" {
 			return db.Where("id < ?", last_id).Limit(limit).Order("id desc"), nil
 		} else {
 			return db.Where("id > ?", last_id).Limit(limit).Order("id asc"), nil
 		}
 	}
-	return db, nil
+	return db.Limit(limit), nil
 }
