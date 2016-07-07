@@ -2,6 +2,7 @@ package db
 
 import (
 	"log"
+	"math"
 	"path/filepath"
 	"strconv"
 
@@ -31,12 +32,13 @@ func Paginate(c *gin.Context) *gorm.DB {
 	limit_query := c.DefaultQuery("limit", "25")
 	page_query := c.Query("page")
 	last_id_query := c.Query("last_id")
-	order := c.Query("order")
+	// order := c.Query("order")
 
 	limit, err := strconv.Atoi(limit_query)
 	if err != nil {
 		limit = 25
 	}
+	limit = int(math.Max(1, math.Min(10000, float64(limit))))
 
 	if page_query != "" {
 		// pagination 1
@@ -44,8 +46,7 @@ func Paginate(c *gin.Context) *gorm.DB {
 		if err != nil {
 			page = 1
 		}
-		offset := limit * (page - 1)
-		return db.Offset(offset).Limit(limit)
+		return db.Offset(limit * (page - 1)).Limit(limit)
 	} else if last_id_query != "" {
 		// pagination 2
 
