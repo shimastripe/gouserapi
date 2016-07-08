@@ -12,7 +12,7 @@ import (
 func GetNations(c *gin.Context) {
 	db := db.DBInstance(c)
 	fields := c.DefaultQuery("fields", "*")
-	var nations []models.Profile
+	var nations []models.Nation
 	db.Select(fields).Find(&nations)
 	c.JSON(200, nations)
 }
