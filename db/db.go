@@ -1,11 +1,8 @@
 package db
 
 import (
-	"errors"
 	"log"
-	"math"
 	"path/filepath"
-	"strconv"
 
 	"github.com/shimastripe/gouserapi/models"
 
@@ -26,41 +23,4 @@ func Connect() *gorm.DB {
 
 func DBInstance(c *gin.Context) *gorm.DB {
 	return c.MustGet("DB").(*gorm.DB)
-}
-
-func Paginate(c *gin.Context) (*gorm.DB, error) {
-	db := DBInstance(c)
-	limit_query := c.DefaultQuery("limit", "25")
-	page_query := c.Query("page")
-	last_id_query := c.Query("last_id")
-	order := c.DefaultQuery("order", "desc")
-
-	limit, err := strconv.Atoi(limit_query)
-	if err != nil {
-		return db, errors.New("invalid parameter.")
-	}
-	limit = int(math.Max(1, math.Min(10000, float64(limit))))
-
-	if page_query != "" {
-		// pagination 1
-		page, err := strconv.Atoi(page_query)
-		if err != nil {
-			return db, errors.New("invalid parameter.")
-		}
-		page = int(math.Max(1, float64(page)))
-		return db.Offset(limit * (page - 1)).Limit(limit), nil
-	} else if last_id_query != "" {
-		// pagination 2
-		last_id, err := strconv.Atoi(last_id_query)
-		if err != nil {
-			return db, errors.New("invalid parameter.")
-		}
-		last_id = int(math.Max(1, float64(last_id)))
-		if order == "desc" {
-			return db.Where("id < ?", last_id).Limit(limit).Order("id desc"), nil
-		} else {
-			return db.Where("id > ?", last_id).Limit(limit).Order("id asc"), nil
-		}
-	}
-	return db.Limit(limit), nil
 }

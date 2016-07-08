@@ -5,19 +5,34 @@ import (
 
 	"github.com/shimastripe/gouserapi/db"
 	"github.com/shimastripe/gouserapi/models"
+	"github.com/shimastripe/gouserapi/pagination"
 
 	"github.com/gin-gonic/gin"
 )
 
 func GetUsers(c *gin.Context) {
-	db, err := db.Paginate(c)
+	pagination := pagination.Pagination{}
+	db, err := pagination.Paginate(c)
 	if err != nil {
 		c.JSON(400, gin.H{"error": "invalid parameter."})
 		return
 	}
 	fields := c.DefaultQuery("fields", "*")
 	var users []models.User
-	db.Select(fields).Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").Find(&users)
+	err = db.Select(fields).Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails").Find(&users).Error
+	if err != nil {
+		c.JSON(500, gin.H{"error": "error occured"})
+		return
+	}
+
+	var index uint
+	if len(users) < 1 {
+		index = 0
+	} else {
+		index = users[len(users)-1].ID
+	}
+	pagination.SetHeaderLink(c, index)
+
 	c.JSON(200, users)
 }
 
