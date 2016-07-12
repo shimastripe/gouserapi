@@ -17,15 +17,28 @@ func setPreload(fields string, db *gorm.DB) ([]string, *gorm.DB) {
 	offset := 0
 	for key, val := range list {
 		switch val {
+		// Belongs-to
 		case "profile":
 			db = db.Preload("Profile")
 			db = db.Preload("Profile.Nation")
 			sel = append(sel[:(key-offset)], sel[(key+1-offset):]...)
 			offset += 1
+			idflag := true
+			for _, v := range sel {
+				if v == "profile_id" {
+					idflag = false
+					break
+				}
+			}
+			if idflag {
+				sel = append(sel, "profile_id")
+			}
+		// Has-one
 		case "account_name":
 			db = db.Preload("AccountName")
 			sel = append(sel[:(key-offset)], sel[(key+1-offset):]...)
 			offset += 1
+		// Has-many
 		case "emails":
 			db = db.Preload("Emails")
 			sel = append(sel[:(key-offset)], sel[(key+1-offset):]...)
