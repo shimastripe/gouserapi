@@ -1,4 +1,4 @@
-package pagination
+package db
 
 import (
 	"errors"
@@ -6,12 +6,9 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/shimastripe/gouserapi/db"
-
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/k0kubun/pp"
 )
 
 type Pagination struct {
@@ -22,7 +19,7 @@ type Pagination struct {
 }
 
 func (p *Pagination) Paginate(c *gin.Context) (*gorm.DB, error) {
-	db := db.DBInstance(c)
+	db := DBInstance(c)
 	limit_query := c.DefaultQuery("limit", "25")
 	page_query := c.DefaultQuery("page", "1")
 	last_id_query := c.Query("last_id")
@@ -41,7 +38,6 @@ func (p *Pagination) Paginate(c *gin.Context) (*gorm.DB, error) {
 			return db, errors.New("invalid parameter.")
 		}
 		p.Last_ID = int(math.Max(0, float64(last_id)))
-		pp.Print(p.Order)
 		if p.Order == "asc" {
 			return db.Where("id > ?", p.Last_ID).Limit(p.Limit).Order("id asc"), nil
 		} else {
@@ -60,7 +56,6 @@ func (p *Pagination) Paginate(c *gin.Context) (*gorm.DB, error) {
 
 func (p *Pagination) SetHeaderLink(c *gin.Context, index uint) {
 	var link string
-	pp.Print(p)
 	if p.Last_ID != 0 {
 		link = fmt.Sprintf("<http://%v%v?limit=%v&last_id=%v&order=%v>; rel=\"next\"", c.Request.Host, c.Request.URL.Path, p.Limit, index, p.Order)
 	} else {
