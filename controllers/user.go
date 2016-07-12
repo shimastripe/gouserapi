@@ -30,6 +30,8 @@ func setPreload(fields string, db *gorm.DB) ([]string, *gorm.DB) {
 			db = db.Preload("Emails")
 			sel = append(sel[:(key-offset)], sel[(key+1-offset):]...)
 			offset += 1
+		case "*":
+			db = db.Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails")
 		}
 	}
 	return sel, db
