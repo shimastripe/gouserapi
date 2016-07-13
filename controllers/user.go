@@ -53,18 +53,22 @@ func setPreload(fields string, db *gorm.DB) ([]string, *gorm.DB) {
 }
 
 func GetUsers(c *gin.Context) {
-	version, err1 := middleware.VersionInit(c)
+	version, err := middleware.VersionInit(c)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
 	pagination := dbpkg.Pagination{}
-	db, err2 := pagination.Paginate(c)
-	if err1 != nil || err2 != nil {
-		c.JSON(400, gin.H{"error": "invalid parameter."})
+	db, err := pagination.Paginate(c)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 	fields := c.DefaultQuery("fields", "*")
 	sel, db := setPreload(fields, db)
 
 	var users []models.User
-	err := db.Select(sel).Find(&users).Error
+	err = db.Select(sel).Find(&users).Error
 	if err != nil {
 		c.JSON(500, gin.H{"error": "error occured"})
 		return
@@ -90,7 +94,7 @@ func GetUsers(c *gin.Context) {
 func GetUser(c *gin.Context) {
 	version, err := middleware.VersionInit(c)
 	if err != nil {
-		c.JSON(400, gin.H{"error": "invalid parameter."})
+		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 	db := dbpkg.DBInstance(c)
@@ -117,7 +121,7 @@ func GetUser(c *gin.Context) {
 func CreateUser(c *gin.Context) {
 	version, err := middleware.VersionInit(c)
 	if err != nil {
-		c.JSON(400, gin.H{"error": "invalid parameter."})
+		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 	db := dbpkg.DBInstance(c)
@@ -140,7 +144,7 @@ func CreateUser(c *gin.Context) {
 func UpdateUser(c *gin.Context) {
 	version, err := middleware.VersionInit(c)
 	if err != nil {
-		c.JSON(400, gin.H{"error": "invalid parameter."})
+		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 	db := dbpkg.DBInstance(c)
@@ -165,7 +169,7 @@ func UpdateUser(c *gin.Context) {
 func DeleteUser(c *gin.Context) {
 	version, err := middleware.VersionInit(c)
 	if err != nil {
-		c.JSON(400, gin.H{"error": "invalid parameter."})
+		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 	db := dbpkg.DBInstance(c)
