@@ -74,11 +74,11 @@ func GetUsers(c *gin.Context) {
 	}
 
 	// paging
-	var index uint
+	var index int
 	if len(users) < 1 {
 		index = 0
 	} else {
-		index = users[len(users)-1].ID
+		index = int(users[len(users)-1].ID)
 	}
 	pagination.SetHeaderLink(c, index)
 

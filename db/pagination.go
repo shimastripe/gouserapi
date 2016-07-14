@@ -54,7 +54,7 @@ func (p *Pagination) Paginate(c *gin.Context) (*gorm.DB, error) {
 	return db.Offset(limit * (p.Page - 1)).Limit(p.Limit), nil
 }
 
-func (p *Pagination) SetHeaderLink(c *gin.Context, index uint) {
+func (p *Pagination) SetHeaderLink(c *gin.Context, index int) {
 	var link string
 	if p.Last_ID != 0 {
 		link = fmt.Sprintf("<http://%v%v?limit=%v&last_id=%v&order=%v>; rel=\"next\"", c.Request.Host, c.Request.URL.Path, p.Limit, index, p.Order)
