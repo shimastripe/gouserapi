@@ -86,8 +86,11 @@ func GetUsers(c *gin.Context) {
 		// conditional branch by version.
 		// 1.0.0 <= this version < 2.0.0 !!
 	}
-
-	c.JSON(200, users)
+	var fieldMap []map[string]interface{}
+	for key, _ := range users {
+		fieldMap = append(fieldMap, models.FieldToMap(users[key], fields))
+	}
+	c.JSON(200, fieldMap)
 }
 
 func GetUser(c *gin.Context) {
@@ -113,7 +116,8 @@ func GetUser(c *gin.Context) {
 		// 1.0.0 <= this version < 2.0.0 !!
 	}
 
-	c.JSON(200, user)
+	fieldMap := models.FieldToMap(user, fields)
+	c.JSON(200, fieldMap)
 	// curl -i http://localhost:8080/api/v1/users/1
 }
 
