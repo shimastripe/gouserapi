@@ -5,10 +5,9 @@ import (
 	"strings"
 
 	dbpkg "github.com/shimastripe/gouserapi/db"
-	"github.com/shimastripe/gouserapi/middleware"
 	"github.com/shimastripe/gouserapi/models"
+	"github.com/shimastripe/gouserapi/version"
 
-	"github.com/blang/semver"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 )
@@ -53,7 +52,7 @@ func setPreload(fields string, db *gorm.DB) ([]string, *gorm.DB) {
 }
 
 func GetUsers(c *gin.Context) {
-	version, err := middleware.VersionInit(c)
+	ver, err := version.New(c)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -74,6 +73,7 @@ func GetUsers(c *gin.Context) {
 		return
 	}
 
+	// paging
 	var index uint
 	if len(users) < 1 {
 		index = 0
@@ -82,17 +82,16 @@ func GetUsers(c *gin.Context) {
 	}
 	pagination.SetHeaderLink(c, index)
 
-	ver_range := semver.MustParseRange(">=1.0.0 <2.0.0")
-	if ver_range(version) {
-		// change the behavior depending on the version
-		// 1.0.0 <= this < 2.0.0
+	if version.Range("1.0.0", "<=", ver) && version.Range(ver, "<", "2.0.0") {
+		// conditional branch by version.
+		// 1.0.0 <= this version < 2.0.0 !!
 	}
 
 	c.JSON(200, users)
 }
 
 func GetUser(c *gin.Context) {
-	version, err := middleware.VersionInit(c)
+	ver, err := version.New(c)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -108,10 +107,10 @@ func GetUser(c *gin.Context) {
 		c.JSON(404, content)
 		return
 	}
-	ver_range := semver.MustParseRange(">=1.0.0 <2.0.0")
-	if ver_range(version) {
-		// change the behavior depending on the version
-		// 1.0.0 <= this < 2.0.0
+
+	if version.Range("1.0.0", "<=", ver) && version.Range(ver, "<", "2.0.0") {
+		// conditional branch by version.
+		// 1.0.0 <= this version < 2.0.0 !!
 	}
 
 	c.JSON(200, user)
@@ -119,7 +118,7 @@ func GetUser(c *gin.Context) {
 }
 
 func CreateUser(c *gin.Context) {
-	version, err := middleware.VersionInit(c)
+	ver, err := version.New(c)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -132,17 +131,17 @@ func CreateUser(c *gin.Context) {
 		c.JSON(500, content)
 		return
 	}
-	ver_range := semver.MustParseRange(">=1.0.0 <2.0.0")
-	if ver_range(version) {
-		// change the behavior depending on the version
-		// 1.0.0 <= this < 2.0.0
+
+	if version.Range("1.0.0", "<=", ver) && version.Range(ver, "<", "2.0.0") {
+		// conditional branch by version.
+		// 1.0.0 <= this version < 2.0.0 !!
 	}
 
 	c.JSON(201, user)
 }
 
 func UpdateUser(c *gin.Context) {
-	version, err := middleware.VersionInit(c)
+	ver, err := version.New(c)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -157,17 +156,17 @@ func UpdateUser(c *gin.Context) {
 	}
 	c.Bind(&user)
 	db.Save(&user)
-	ver_range := semver.MustParseRange(">=1.0.0 <2.0.0")
-	if ver_range(version) {
-		// change the behavior depending on the version
-		// 1.0.0 <= this < 2.0.0
+
+	if version.Range("1.0.0", "<=", ver) && version.Range(ver, "<", "2.0.0") {
+		// conditional branch by version.
+		// 1.0.0 <= this version < 2.0.0 !!
 	}
 
 	c.JSON(200, user)
 }
 
 func DeleteUser(c *gin.Context) {
-	version, err := middleware.VersionInit(c)
+	ver, err := version.New(c)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -181,10 +180,10 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 	db.Delete(&user)
-	ver_range := semver.MustParseRange(">=1.0.0 <2.0.0")
-	if ver_range(version) {
-		// change the behavior depending on the version
-		// 1.0.0 <= this < 2.0.0
+
+	if version.Range("1.0.0", "<=", ver) && version.Range(ver, "<", "2.0.0") {
+		// conditional branch by version.
+		// 1.0.0 <= this version < 2.0.0 !!
 	}
 
 	c.Writer.WriteHeader(http.StatusNoContent)
