@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"strings"
 
 	dbpkg "github.com/shimastripe/gouserapi/db"
 	"github.com/shimastripe/gouserapi/models"
@@ -12,11 +11,11 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func setPreload(fields string, db *gorm.DB) ([]string, *gorm.DB) {
-	list := strings.Split(fields, ",")
-	sel := strings.Split(fields, ",")
+func setPreload(fields []string, db *gorm.DB) ([]string, *gorm.DB) {
+	sel := make([]string, len(fields))
+	copy(sel, fields)
 	offset := 0
-	for key, val := range list {
+	for key, val := range fields {
 		switch val {
 		// Belongs-to
 		case "profile":
@@ -63,9 +62,8 @@ func GetUsers(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	fields := c.DefaultQuery("fields", "*")
+	fields, nestFields := models.ParseFields(c.DefaultQuery("fields", "*"))
 	sel, db := setPreload(fields, db)
-
 	var users []models.User
 	err = db.Select(sel).Find(&users).Error
 	if err != nil {
@@ -88,7 +86,7 @@ func GetUsers(c *gin.Context) {
 	}
 	var fieldMap []map[string]interface{}
 	for key, _ := range users {
-		fieldMap = append(fieldMap, models.FieldToMap(users[key], fields))
+		fieldMap = append(fieldMap, models.FieldToMap(users[key], fields, nestFields))
 	}
 	c.JSON(200, fieldMap)
 }
@@ -101,7 +99,7 @@ func GetUser(c *gin.Context) {
 	}
 	db := dbpkg.DBInstance(c)
 	id := c.Params.ByName("id")
-	fields := c.DefaultQuery("fields", "*")
+	fields, nestFields := models.ParseFields(c.DefaultQuery("fields", "*"))
 	sel, db := setPreload(fields, db)
 	var user models.User
 	err = db.Select(sel).First(&user, id).Error
@@ -116,7 +114,7 @@ func GetUser(c *gin.Context) {
 		// 1.0.0 <= this version < 2.0.0 !!
 	}
 
-	fieldMap := models.FieldToMap(user, fields)
+	fieldMap := models.FieldToMap(user, fields, nestFields)
 	c.JSON(200, fieldMap)
 	// curl -i http://localhost:8080/api/v1/users/1
 }
