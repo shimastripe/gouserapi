@@ -37,10 +37,8 @@ func ParseFields(fields string) ([]string, map[string][]string) {
 	return fieldsParse, nestFields
 }
 
-func FieldToMap(model User, fields []string, nestFields map[string][]string) map[string]interface{} {
+func FieldToMap(model interface{}, fields []string, nestFields map[string][]string) map[string]interface{} {
 	u := make(map[string]interface{})
-	p := reflect.MakeMap(model)
-	return p
 	ts, vs := reflect.TypeOf(model), reflect.ValueOf(model)
 	if len(nestFields) == 0 {
 		for i := 0; i < ts.NumField(); i++ {
