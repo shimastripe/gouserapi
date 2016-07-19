@@ -38,11 +38,32 @@ func setPreload(fields []string, db *gorm.DB) ([]string, *gorm.DB) {
 			db = db.Preload("AccountName")
 			sel = append(sel[:(key-offset)], sel[(key+1-offset):]...)
 			offset += 1
+			idflag := true
+			for _, v := range sel {
+				if v == "id" {
+					idflag = false
+					break
+				}
+			}
+			if idflag {
+				sel = append(sel, "id")
+			}
 		// Has-many
 		case "emails":
 			db = db.Preload("Emails")
 			sel = append(sel[:(key-offset)], sel[(key+1-offset):]...)
 			offset += 1
+			idflag := true
+			for _, v := range sel {
+				if v == "id" {
+					idflag = false
+					break
+				}
+			}
+			if idflag {
+				sel = append(sel, "id")
+			}
+
 		case "*":
 			db = db.Preload("Profile").Preload("Profile.Nation").Preload("AccountName").Preload("Emails")
 		}
