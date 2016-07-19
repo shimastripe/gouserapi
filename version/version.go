@@ -34,9 +34,9 @@ func New(c *gin.Context) (string, error) {
 		return "-1", nil
 	}
 
-	_, err := strconv.Atoi(ver)
+	_, err := strconv.Atoi(strings.Join(strings.Split(ver, "."), ""))
 	if err != nil {
-		return "", errors.New("illegal input version!")
+		return "", err
 	}
 	return ver, nil
 }
