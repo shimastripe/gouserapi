@@ -61,6 +61,7 @@ func FieldToMap(model interface{}, fields []string, nestFields map[string][]stri
 			var jsonKey string
 			field := ts.Field(i)
 			jsonTag := field.Tag.Get("json")
+
 			if jsonTag == "" {
 				jsonKey = field.Name
 			} else {
@@ -71,7 +72,11 @@ func FieldToMap(model interface{}, fields []string, nestFields map[string][]stri
 				_, ok := nestFields[jsonKey]
 				if ok {
 					f, n := ParseFields(strings.Join(nestFields[jsonKey], ","))
-					u[jsonKey] = FieldToMap(vs.Field(i).Interface(), f, n)
+					if vs.Field(i).Kind() == reflect.Ptr {
+						u[jsonKey] = FieldToMap(vs.Field(i).Elem().Interface(), f, n)
+					} else {
+						u[jsonKey] = FieldToMap(vs.Field(i).Interface(), f, n)
+					}
 				} else {
 					u[jsonKey] = vs.Field(i).Interface()
 				}
