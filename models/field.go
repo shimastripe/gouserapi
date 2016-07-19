@@ -40,50 +40,32 @@ func ParseFields(fields string) ([]string, map[string][]string) {
 func FieldToMap(model interface{}, fields []string, nestFields map[string][]string) map[string]interface{} {
 	u := make(map[string]interface{})
 	ts, vs := reflect.TypeOf(model), reflect.ValueOf(model)
-	if len(nestFields) == 0 {
-		for i := 0; i < ts.NumField(); i++ {
-			var jsonKey string
-			field := ts.Field(i)
-			jsonTag := field.Tag.Get("json")
+	for i := 0; i < ts.NumField(); i++ {
+		var jsonKey string
+		field := ts.Field(i)
+		jsonTag := field.Tag.Get("json")
 
-			if jsonTag == "" {
-				jsonKey = field.Name
-			} else {
-				jsonKey = strings.Split(jsonTag, ",")[0]
-			}
-
-			if fields[0] == "*" || contains(fields, jsonKey) {
-				u[jsonKey] = vs.Field(i).Interface()
-			}
+		if jsonTag == "" {
+			jsonKey = field.Name
+		} else {
+			jsonKey = strings.Split(jsonTag, ",")[0]
 		}
-	} else {
-		for i := 0; i < ts.NumField(); i++ {
-			var jsonKey string
-			field := ts.Field(i)
-			jsonTag := field.Tag.Get("json")
 
-			if jsonTag == "" {
-				jsonKey = field.Name
-			} else {
-				jsonKey = strings.Split(jsonTag, ",")[0]
-			}
-
-			if fields[0] == "*" || contains(fields, jsonKey) {
-				_, ok := nestFields[jsonKey]
-				if ok {
-					f, n := ParseFields(strings.Join(nestFields[jsonKey], ","))
-					if vs.Field(i).Kind() == reflect.Ptr {
-						if !vs.Field(i).IsNil() {
-							u[jsonKey] = FieldToMap(vs.Field(i).Elem().Interface(), f, n)
-						} else {
-							u[jsonKey] = nil
-						}
+		if fields[0] == "*" || contains(fields, jsonKey) {
+			_, ok := nestFields[jsonKey]
+			if ok {
+				f, n := ParseFields(strings.Join(nestFields[jsonKey], ","))
+				if vs.Field(i).Kind() == reflect.Ptr {
+					if !vs.Field(i).IsNil() {
+						u[jsonKey] = FieldToMap(vs.Field(i).Elem().Interface(), f, n)
 					} else {
-						u[jsonKey] = FieldToMap(vs.Field(i).Interface(), f, n)
+						u[jsonKey] = nil
 					}
 				} else {
-					u[jsonKey] = vs.Field(i).Interface()
+					u[jsonKey] = FieldToMap(vs.Field(i).Interface(), f, n)
 				}
+			} else {
+				u[jsonKey] = vs.Field(i).Interface()
 			}
 		}
 	}
