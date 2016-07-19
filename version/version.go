@@ -50,7 +50,7 @@ func Range(left string, op string, right string) bool {
 	case ">":
 		return (compare(left, right) == 1)
 	case ">=":
-		return (compare(left, right) >= 1)
+		return (compare(left, right) >= 0)
 	case "==":
 		return (compare(left, right) == 0)
 	}
