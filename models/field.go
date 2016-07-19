@@ -61,6 +61,13 @@ func FieldToMap(model interface{}, fields []string, nestFields map[string][]stri
 					} else {
 						u[jsonKey] = nil
 					}
+				} else if vs.Field(i).Kind() == reflect.Slice {
+					var fieldMap []interface{}
+					s := reflect.ValueOf(vs.Field(i).Interface())
+					for i := 0; i < s.Len(); i++ {
+						fieldMap = append(fieldMap, FieldToMap(s.Index(i).Interface(), f, n))
+					}
+					u[jsonKey] = fieldMap
 				} else {
 					u[jsonKey] = FieldToMap(vs.Field(i).Interface(), f, n)
 				}
