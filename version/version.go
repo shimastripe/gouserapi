@@ -33,6 +33,11 @@ func New(c *gin.Context) (string, error) {
 	if ver == "" {
 		return "-1", nil
 	}
+
+	_, err := strconv.Atoi(ver)
+	if err != nil {
+		return "", errors.New("illegal input version!")
+	}
 	return ver, nil
 }
 
