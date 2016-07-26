@@ -22,7 +22,9 @@ func Connect() *gorm.DB {
 	if os.Getenv("DB") == "DEBUG" {
 		db.LogMode(true)
 	}
-	db.AutoMigrate(&models.User{}, &models.Profile{}, &models.AccountName{}, &models.Email{}, &models.Nation{})
+	if os.Getenv("AUTOMIGRATE") == "true" {
+		db.AutoMigrate(&models.User{}, &models.Profile{}, &models.AccountName{}, &models.Email{}, &models.Nation{})
+	}
 	return db
 }
 
