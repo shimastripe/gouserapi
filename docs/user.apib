@@ -1,0 +1,203 @@
+FORMAT: 1A
+HOST: http://localhost:8080
+
+# Group Users
+Welcome to the users API. This API provides access to the users service.
+
+## users [/users]
+
+### Create user [POST]
+
+Create a new user
+
++ Request user (application/json; charset=utf-8)
+    + Headers
+
+            Accept: application/vnd.wantedly+json
+
+    + Attributes
+        + profile_id: 1 (number)
+
++ Response 201 (application/json; charset=utf-8)
+    + Attributes (users)
+
+### Get users [GET]
+
+Returns user list.
+
++ Request default (application/json; charset=utf-8)
+    + Headers
+
+            Accept: application/vnd.wantedly+json
+
++ Response 200 (application/json; charset=utf-8)
+    + Attributes (array)
+        + (users)
+
+## user details [/users/{id}]
+
++ Parameters
+    + id: `1` (enum[string]) - The ID of the desired user.
+        + Members
+            + `1`
+            + `2`
+            + `3`
+
+### Get user [GET]
+
+Returns user.
+
++ Request default (application/json; charset=utf-8)
+    + Headers
+
+            Accept: application/vnd.wantedly+json
+
++ Response 200 (application/json; charset=utf-8)
+    + Attributes (users)
+
+### Update user [PUT]
+
+Update user.
+
++ Request users (application/json; charset=utf-8)
+    + Headers
+
+            Accept: application/vnd.wantedly+json
+    + Attributes
+        + name: NAME (string)
+        + age: 1 (number)
+        + admin: false (boolean)
+
++ Response 200 (application/json; charset=utf-8)
+    + Attributes (users)
+
+### Delete user [DELETE]
+
+Delete user.
+
++ Request default (application/json; charset=utf-8)
+    + Headers
+
+            Accept: application/vnd.wantedly+json
+
++ Response 204
+
+# Group Profiles
+
+## profiles [/profiles]
+
+### Create profile [POST]
+
+Create a new profile
+
++ Request profile (application/json; charset=utf-8)
+    + Headers
+
+            Accept: application/vnd.wantedly+json
+
+    + Attributes
+        + name: NAME (string)
+        + nation_id: 1 (number)
+
++ Response 201 (application/json; charset=utf-8)
+    + Attributes (profiles)
+
+### Get profiles [GET]
+
+Returns profile list.
+
++ Request default (application/json; charset=utf-8)
+    + Headers
+
+            Accept: application/vnd.wantedly+json
+
++ Response 200 (application/json; charset=utf-8)
+    + Attributes (array)
+        + (profiles)
+
+## profile details [/profiles/{id}]
+
++ Parameters
+    + id: `1` (enum[string]) - The ID of the desired user.
+        + Members
+            + `1`
+            + `2`
+            + `3`
+
+### Get profile [GET]
+
+Returns profile.
+
++ Request default (application/json; charset=utf-8)
+    + Headers
+
+            Accept: application/vnd.wantedly+json
+
++ Response 200 (application/json; charset=utf-8)
+    + Attributes (profiles)
+
+### Update profile [PUT]
+
+Update profile.
+
++ Request profiles (application/json; charset=utf-8)
+    + Headers
+
+            Accept: application/vnd.wantedly+json
+    + Attributes
+        + name: NAME (string)
+        + nation_id: 1 (number)
+
++ Response 200 (application/json; charset=utf-8)
+    + Attributes (profiles)
+
+### Delete profile [DELETE]
+
+Delete profile.
+
++ Request default (application/json; charset=utf-8)
+    + Headers
+
+            Accept: application/vnd.wantedly+json
+
++ Response 204
+
+# Data Structures
+
+## users (object)
+
++ id: 1 (number)
++ profile (profiles, nullable)
++ profile_id: 1 (number)
++ account_name (accountnames, nullable)
++ emails (array)
++ created_at: CREATEDAT (string)
++ updated_at: UPDATEDAT (string)
+
+## accountnames (object)
+
++ id: 1 (number)
++ user_id: 1 (number)
++ user (users, nullable)
++ account_name: ACCOUNTNAME (string)
+
+## profiles (object)
+
++ id: 1 (number)
++ name: NAME (string)
++ user (users, nullable)
++ nation (nations, nullable)
++ nation_id: 1 (number)
+
+## nations (object)
+
++ id: 1 (number)
++ country: COUNTRY (string)
++ profile (profiles, nullable)
+
+## emails (object)
+
++ id: 1 (number)
++ user_id: 1 (number)
++ email: EMAIL (string)
++ user (users, nullable)
